@@ -1,7 +1,6 @@
-function! InsertUKey()
-    exec 'normal ^"zd$' 
-    let g:emacs_reg = getreg('z')
-endfunction
+inoremap <silent> <Plug>emc_iForwardWord <C-O>:<C-U>call emc#iForwardWord()<CR>
+inoremap <silent> <Plug>emc_iBackWord <C-O>:<C-U>call emc#iBackWord()<CR>
+inoremap <silent> <Plug>emc_iKillLine <C-O>:<C-U>call emc#iKillLine()<CR>
 
 function! InsertCommaKey()
     exec 'normal vwb"zd' 
@@ -48,22 +47,12 @@ function! SaveRegister(func)
 endfunction
 
 " Emacs Insert Mode
-inoremap <C-W> <C-O>B
-inoremap <C-E> <C-O>W
 inoremap <C-R> <Home>
 
 inoremap <silent> <C-Y> <C-O>:call SaveRegister(function('InsertYKey'))<CR>
 inoremap <silent> <C-U> <C-O>:call SaveRegister(function('InsertUKey'))<CR>
 
-inoremap <C-D> <Left>
-inoremap <C-F> <Right>
-inoremap <C-G> <End>
-
-inoremap <C-V> <C-R>+
 inoremap <silent> <F1> <C-O>:call SaveRegister(function('InsertCommaKey'))<CR>
-
-inoremap <F5> <C-X>
-inoremap <F6> <C-V>
 
 " Emacs Command Line Mode
 cnoremap <C-W> <S-Left>
