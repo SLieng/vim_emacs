@@ -35,7 +35,7 @@ function! emc#iKillBackWord()
     if pos == strchars(line)
         let pos += 1
     endif
-    let cut = line[newPos-1:pos]
+    let cut = strcharpart(line, newPos-1, pos)
     if cut != ''
         let g:emcReg = cut
     endif
@@ -45,7 +45,9 @@ endfunction
 function! emc#iYank()
     let line = getline('.')
     let pos = emc#h#getPos()
-    let newLine = line[:pos] . g:emcReg . line[pos:]
+    let bef = strcharpart(line, 0, pos)
+    let aft = strcharpart(line, pos)
+    let newLine = bef . g:emcReg . aft
     call setline('.', newLine)
     call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
 endfunction
@@ -87,7 +89,7 @@ function! emc#cKillBackWord()
     if pos == strchars(line)
         let pos = strchars(line)
     endif
-    let cut = line[newPos-1:pos]
+    let cut = strcharpart(line, newPos-1, pos)
     if cut != ''
         let g:emcReg = cut
     endif
@@ -98,7 +100,9 @@ endfunction
 function! emc#cYank()
     let line = getcmdline()
     let pos = emc#h#getCmdPos()
-    let newLine = line[:pos] . g:emcReg . line[pos:]
+    let bef = strcharpart(line, 0, pos)
+    let aft = strcharpart(line, pos)
+    let newLine = bef . g:emcReg . aft
     call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
     return newLine
 endfunction
