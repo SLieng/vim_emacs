@@ -3,19 +3,9 @@ inoremap <silent> <Plug>emc_iBackWord <C-O>:<C-U>call emc#iBackWord()<CR>
 inoremap <silent> <Plug>emc_iBegLine <C-O>:<C-U>call emc#iBegLine()<CR>
 inoremap <silent> <Plug>emc_iKillLine <C-O>:<C-U>call emc#iKillLine()<CR>
 inoremap <silent> <Plug>emc_iKillBackWord <C-O>:<C-U>call emc#iKillBackWord()<CR>
+inoremap <silent> <Plug>emc_iYank <C-O>:<C-U>call emc#iYank()<CR>
 
-function! InsertCommaKey()
-    exec 'normal vwb"zd' 
-    let g:emacs_reg = getreg('z')
-endfunction
-
-function! InsertYKey()
-    if !exists('g:emacs_reg')
-        let g:emacs_reg = ''
-    endif
-    call setreg('z', g:emacs_reg)
-    exec 'normal "zp' 
-endfunction
+" exec 'normal "zp' 
 
 function! CommandUKey()
     let g:emacs_reg = getcmdline()
@@ -40,16 +30,6 @@ function! CommandCommaKey()
 
     return l:new_cmd_line
 endfunction
-
-function! SaveRegister(func)
-    let l:old_reg = getreg('z')
-    let l:old_reg_type = getregtype('z')
-    call a:func()
-    call setreg('z', l:old_reg, l:old_reg_type)
-endfunction
-
-" Emacs Insert Mode
-inoremap <silent> <C-Y> <C-O>:call SaveRegister(function('InsertYKey'))<CR>
 
 " Emacs Command Line Mode
 cnoremap <C-W> <S-Left>

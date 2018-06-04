@@ -38,3 +38,8 @@ function! emc#iKillBackWord()
         call feedkeys(repeat("\<BS>",  cur[2] - newPos))
     endif
 endfunction
+
+function! emc#iYank()
+    echo 'asdfsadf'
+    " return substitute(g:emcReg, '[[:cntrl:]]', "\<C-V>&", 'g')
+endfunction
