@@ -1,15 +1,18 @@
 function! emc#iForwardWord()
-    let cur = getcurpos()
+    let pos = emc#h#getPos()
     let line = getline('.')
-    let cur[2] = emc#h#nextWord(cur[2], line)
-    call setpos('.', cur)
+    let newPos = emc#h#nextWord(pos, line)
+    call emc#h#moveTo(pos, newPos)
 endfunction
 
 function! emc#iBackWord()
-    let cur = getcurpos()
+    let pos = emc#h#getPos()
     let line = getline('.')
-    let cur[2] = emc#h#prevWord(cur[2], line)
-    call setpos('.', cur)
+    let newPos = emc#h#prevWord(pos, line)
+    if pos == strchars(line)
+        let pos += 1
+    endif
+    call emc#h#moveTo(pos, newPos)
 endfunction
 
 function! emc#iBegLine()
@@ -26,20 +29,76 @@ function! emc#iKillLine()
 endfunction
 
 function! emc#iKillBackWord()
-    let cur = getcurpos()
+    let pos = emc#h#getPos()
     let line = getline('.')
-    let newPos = emc#h#prevWord(cur[2], line)
-    let n = strchars(line)
-    if cur[2] == n
-        let g:emcReg = line[newPos-1:cur[2]]
-        call feedkeys(repeat("\<BS>",  cur[2] - newPos + 1))
-    else
-        let g:emcReg = line[newPos-1:cur[2]-1]
-        call feedkeys(repeat("\<BS>",  cur[2] - newPos))
+    let newPos = emc#h#prevWord(pos, line)
+    if pos == strchars(line)
+        let pos += 1
     endif
+    let cut = line[newPos-1:pos]
+    if cut != ''
+        let g:emcReg = cut
+    endif
+    call feedkeys(repeat("\<BS>",  pos - newPos))
 endfunction
 
 function! emc#iYank()
-    echo 'asdfsadf'
-    " return substitute(g:emcReg, '[[:cntrl:]]', "\<C-V>&", 'g')
+    let line = getline('.')
+    let pos = emc#h#getPos()
+    let newLine = line[:pos] . g:emcReg . line[pos:]
+    call setline('.', newLine)
+    call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
+endfunction
+
+function! emc#cForwardWord()
+    let pos = emc#h#getCmdPos()
+    let line = getcmdline()
+    let newPos = emc#h#nextWord(pos, line)
+    call emc#h#moveTo(pos, newPos)
+    return line
+endfunction
+
+function! emc#cBackWord()
+    let pos = emc#h#getCmdPos()
+    let line = getcmdline()
+    let newPos = emc#h#prevWord(pos, line)
+    call emc#h#moveTo(pos, newPos)
+    return line
+endfunction
+
+function! emc#cBegLine()
+    call setcmdpos(1)
+    return getcmdline()
+endfunction
+
+function! emc#cKillLine()
+    let line = getcmdline()
+    if line != ''
+        let g:emcReg = line
+    endif
+    return ''
+endfunction
+
+function! emc#cKillBackWord()
+    let pos = emc#h#getCmdPos()
+    let line = getcmdline()
+    let newPos = emc#h#prevWord(pos, line)
+    let n = strchars(line)
+    if pos == strchars(line)
+        let pos = strchars(line)
+    endif
+    let cut = line[newPos-1:pos]
+    if cut != ''
+        let g:emcReg = cut
+    endif
+    call feedkeys(repeat("\<BS>",  pos - newPos))
+    return getcmdline()
+endfunction
+
+function! emc#cYank()
+    let line = getcmdline()
+    let pos = emc#h#getCmdPos()
+    let newLine = line[:pos] . g:emcReg . line[pos:]
+    call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
+    return newLine
 endfunction
