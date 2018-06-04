@@ -49,9 +49,15 @@ function! emc#h#getCmdPos()
     return strchars((getcmdline() . " ")[:getcmdpos() - 1])
 endfunction
 
-function! emc#h#moveTo(x, y)
+function! emc#h#moveTo(line, x, y)
     if a:x < a:y
-        return feedkeys(repeat("\<right>", a:y - a:x))
+        let bytes = strlen(strcharpart(a:line, a:x, a:y-a:x))
+        return feedkeys(repeat("\<right>", width))
     endif
-    return feedkeys(repeat("\<left>", a:x - a:y))
+    echo strcharpart(a:line, a:y-1, a:x-a:y)
+    let bytes = strlen(strcharpart(a:line, a:y-1, a:x-a:y))
+    let cur = getcurpos()
+    let cur[2] -= bytes
+    call setpos('.', cur)
+    " return feedkeys(repeat("\<left>", width))
 endfunction

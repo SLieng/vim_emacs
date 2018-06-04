@@ -2,7 +2,7 @@ function! emc#iForwardWord()
     let pos = emc#h#getPos()
     let line = getline('.')
     let newPos = emc#h#nextWord(pos, line)
-    call emc#h#moveTo(pos, newPos)
+    call emc#h#moveTo(line, pos, newPos)
 endfunction
 
 function! emc#iBackWord()
@@ -12,7 +12,7 @@ function! emc#iBackWord()
     if pos == strchars(line)
         let pos += 1
     endif
-    call emc#h#moveTo(pos, newPos)
+    call emc#h#moveTo(line, pos, newPos)
 endfunction
 
 function! emc#iBegLine()
@@ -49,14 +49,14 @@ function! emc#iYank()
     let aft = strcharpart(line, pos)
     let newLine = bef . g:emcReg . aft
     call setline('.', newLine)
-    call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
+    call emc#h#moveTo(line, pos, pos + strchars(g:emcReg) + 1)
 endfunction
 
 function! emc#cForwardWord()
     let pos = emc#h#getCmdPos()
     let line = getcmdline()
     let newPos = emc#h#nextWord(pos, line)
-    call emc#h#moveTo(pos, newPos)
+    call emc#h#moveTo(line, pos, newPos)
     return line
 endfunction
 
@@ -64,7 +64,7 @@ function! emc#cBackWord()
     let pos = emc#h#getCmdPos()
     let line = getcmdline()
     let newPos = emc#h#prevWord(pos, line)
-    call emc#h#moveTo(pos, newPos)
+    call emc#h#moveTo(line, pos, newPos)
     return line
 endfunction
 
@@ -103,6 +103,6 @@ function! emc#cYank()
     let bef = strcharpart(line, 0, pos)
     let aft = strcharpart(line, pos)
     let newLine = bef . g:emcReg . aft
-    call emc#h#moveTo(pos, pos + strchars(g:emcReg) + 1)
+    call emc#h#moveTo(line, pos, pos + strchars(g:emcReg) + 1)
     return newLine
 endfunction
