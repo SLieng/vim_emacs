@@ -2,17 +2,14 @@ function! emc#iForwardWord()
     let pos = emc#h#getPos()
     let line = getline('.')
     let newPos = emc#h#nextWord(pos, line)
-    call emc#h#moveTo(line, pos, newPos)
+    call emc#h#moveCurTo(line, pos, newPos)
 endfunction
 
 function! emc#iBackWord()
     let pos = emc#h#getPos()
     let line = getline('.')
     let newPos = emc#h#prevWord(pos, line)
-    if pos == strchars(line)
-        let pos += 1
-    endif
-    call emc#h#moveTo(line, pos, newPos)
+    call emc#h#moveCurTo(line, pos, newPos)
 endfunction
 
 function! emc#iBegLine()
@@ -32,14 +29,14 @@ function! emc#iKillBackWord()
     let pos = emc#h#getPos()
     let line = getline('.')
     let newPos = emc#h#prevWord(pos, line)
-    if pos == strchars(line)
-        let pos += 1
-    endif
-    let cut = strcharpart(line, newPos-1, pos)
+    let cut = strcharpart(line, newPos-1, pos-newPos+1)
     if cut != ''
         let g:emcReg = cut
     endif
-    call feedkeys(repeat("\<BS>",  pos - newPos))
+    let bef = strcharpart(line, 0, newPos-1)
+    let aft = strcharpart(line, pos)
+    call emc#h#moveCurTo(line, pos, newPos)
+    call setline('.', bef . aft)
 endfunction
 
 function! emc#iYank()
@@ -49,14 +46,14 @@ function! emc#iYank()
     let aft = strcharpart(line, pos)
     let newLine = bef . g:emcReg . aft
     call setline('.', newLine)
-    call emc#h#moveTo(line, pos, pos + strchars(g:emcReg) + 1)
+    call emc#h#moveCurTo(newLine, pos, pos + strchars(g:emcReg))
 endfunction
 
 function! emc#cForwardWord()
     let pos = emc#h#getCmdPos()
     let line = getcmdline()
     let newPos = emc#h#nextWord(pos, line)
-    call emc#h#moveTo(line, pos, newPos)
+    call emc#h#moveCmdTo(line, pos, newPos)
     return line
 endfunction
 
@@ -64,7 +61,7 @@ function! emc#cBackWord()
     let pos = emc#h#getCmdPos()
     let line = getcmdline()
     let newPos = emc#h#prevWord(pos, line)
-    call emc#h#moveTo(line, pos, newPos)
+    call emc#h#moveCmdTo(line, pos, newPos)
     return line
 endfunction
 
@@ -86,15 +83,14 @@ function! emc#cKillBackWord()
     let line = getcmdline()
     let newPos = emc#h#prevWord(pos, line)
     let n = strchars(line)
-    if pos == strchars(line)
-        let pos = strchars(line)
-    endif
     let cut = strcharpart(line, newPos-1, pos)
     if cut != ''
         let g:emcReg = cut
     endif
-    call feedkeys(repeat("\<BS>",  pos - newPos))
-    return getcmdline()
+    let bef = strcharpart(line, 0, newPos-1)
+    let aft = strcharpart(line, pos)
+    call emc#h#moveCmdTo(line, pos, newPos)
+    return bef . aft
 endfunction
 
 function! emc#cYank()
@@ -103,6 +99,6 @@ function! emc#cYank()
     let bef = strcharpart(line, 0, pos)
     let aft = strcharpart(line, pos)
     let newLine = bef . g:emcReg . aft
-    call emc#h#moveTo(line, pos, pos + strchars(g:emcReg) + 1)
+    call emc#h#moveCmdTo(line . g:emcReg, pos, pos + strchars(g:emcReg))
     return newLine
 endfunction

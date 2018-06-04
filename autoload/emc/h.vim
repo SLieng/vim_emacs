@@ -49,15 +49,24 @@ function! emc#h#getCmdPos()
     return strchars((getcmdline() . " ")[:getcmdpos() - 1])
 endfunction
 
-function! emc#h#moveTo(line, x, y)
+function! emc#h#moveCurTo(line, x, y)
     if a:x < a:y
-        let bytes = strlen(strcharpart(a:line, a:x, a:y-a:x))
-        return feedkeys(repeat("\<right>", width))
+        let bytes = strlen(strcharpart(a:line, a:x-1, a:y-a:x))
+    else
+        let bytes = -strlen(strcharpart(a:line, a:y-1, a:x-a:y))
     endif
-    echo strcharpart(a:line, a:y-1, a:x-a:y)
-    let bytes = strlen(strcharpart(a:line, a:y-1, a:x-a:y))
     let cur = getcurpos()
-    let cur[2] -= bytes
+    let cur[2] += bytes
     call setpos('.', cur)
-    " return feedkeys(repeat("\<left>", width))
+endfunction
+
+function! emc#h#moveCmdTo(line, x, y)
+    if a:x < a:y
+        let bytes = strlen(strcharpart(a:line, a:x-1, a:y-a:x))
+    else
+        let bytes = -strlen(strcharpart(a:line, a:y-1, a:x-a:y))
+    endif
+    let pos = getcmdpos()
+    let pos += bytes
+    call setcmdpos(pos)
 endfunction
