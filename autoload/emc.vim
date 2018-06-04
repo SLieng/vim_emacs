@@ -12,11 +12,13 @@ function! emc#iBackWord()
     call setpos('.', cur)
 endfunction
 
+function! emc#iBegLine()
+    call cursor(0, 1)
+    let ret = search('\v\S', 'c')
+endfunction
+
 function! emc#iKillLine()
     let line = getline('.')
-    let nonSpacePos = emc#h#firstNonSpace(line)
-    call setline('.', repeat(' ', nonSpacePos))
-
-    " normal ^"zd$' 
-    " let g:emacs_reg = getreg('z')
+    let g:emcReg = line
+    call setline('.', emc#h#firstNonSpace(line))
 endfunction

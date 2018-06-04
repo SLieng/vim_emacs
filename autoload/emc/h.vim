@@ -40,15 +40,5 @@ function! emc#h#prevWord(x, line)
 endfunction
 
 function! emc#h#firstNonSpace(line)
-    let x = 0
-    let s = a:line
-    let n = strchars(s)
-
-    while x < n && strcharpart(s, x, 1) =~ '\s'
-        x += 1
-    if x == n
-        return 0
-    endif
-
-    return x
+    return substitute(a:line, '\v^(\s*).*', '\1', '/g')
 endfunction
