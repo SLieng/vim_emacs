@@ -19,6 +19,22 @@ endfunction
 
 function! emc#iKillLine()
     let line = getline('.')
-    let g:emcReg = line
+    if line != ''
+        let g:emcReg = line
+    endif
     call setline('.', emc#h#firstNonSpace(line))
+endfunction
+
+function! emc#iKillBackWord()
+    let cur = getcurpos()
+    let line = getline('.')
+    let newPos = emc#h#prevWord(cur[2], line)
+    let n = strchars(line)
+    if cur[2] == n
+        let g:emcReg = line[newPos-1:cur[2]]
+        call feedkeys(repeat("\<BS>",  cur[2] - newPos + 1))
+    else
+        let g:emcReg = line[newPos-1:cur[2]-1]
+        call feedkeys(repeat("\<BS>",  cur[2] - newPos))
+    endif
 endfunction

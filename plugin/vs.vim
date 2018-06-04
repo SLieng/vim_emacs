@@ -2,6 +2,7 @@ inoremap <silent> <Plug>emc_iForwardWord <C-O>:<C-U>call emc#iForwardWord()<CR>
 inoremap <silent> <Plug>emc_iBackWord <C-O>:<C-U>call emc#iBackWord()<CR>
 inoremap <silent> <Plug>emc_iBegLine <C-O>:<C-U>call emc#iBegLine()<CR>
 inoremap <silent> <Plug>emc_iKillLine <C-O>:<C-U>call emc#iKillLine()<CR>
+inoremap <silent> <Plug>emc_iKillBackWord <C-O>:<C-U>call emc#iKillBackWord()<CR>
 
 function! InsertCommaKey()
     exec 'normal vwb"zd' 
@@ -49,8 +50,6 @@ endfunction
 
 " Emacs Insert Mode
 inoremap <silent> <C-Y> <C-O>:call SaveRegister(function('InsertYKey'))<CR>
-
-inoremap <silent> <F1> <C-O>:call SaveRegister(function('InsertCommaKey'))<CR>
 
 " Emacs Command Line Mode
 cnoremap <C-W> <S-Left>
